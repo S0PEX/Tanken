@@ -6,14 +6,14 @@ import { GasType, SortType, tankKoenigApi } from "./tanken-api";
 let e5Threshold = 1.45;
 const bot = new Telegraf("1854406302:AAEjtuKxhdhu8HhaQ1JXu-nPNOpboPHPfi8");
 
-chron.schedule("*/10 * * * * *", async () => {
+chron.schedule("*/15 * * * *", async () => {
   tankKoenigApi
     .getStationsByLocation(
       50.963604,
       7.142388,
-      3,
+      5,
       SortType.Price,
-      GasType.Benzin
+      GasType.E5
     )
     .then((data) => {
       data.stations?.forEach((station) => {
@@ -47,6 +47,7 @@ bot.command("setPriceE5", (ctx: Context) => {
     ctx.reply(error);
   }
 });
+
 bot.launch();
 
 // Enable graceful stop

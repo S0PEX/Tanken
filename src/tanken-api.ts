@@ -2,8 +2,8 @@ import { throws } from "assert/strict";
 import axios, { AxiosResponse } from "axios";
 
 export enum GasType {
-  Benzin = "e5",
-  Bezin_E10 = "E10",
+  E5 = "e5",
+  E10 = "E10",
   Diesel = "diesel",
   All = "all",
 }
@@ -71,7 +71,7 @@ export class TankKoenigApi {
       lng,
       rad,
       sort: sort || print,
-      type: type || GasType.Benzin,
+      type: type || GasType.E5,
     });
   }
 }
