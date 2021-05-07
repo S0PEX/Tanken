@@ -4,7 +4,7 @@ import chron from "node-cron";
 import { GasType, SortType, tankKoenigApi } from "./tanken-api";
 
 let e5Threshold = 1.45;
-const bot = new Telegraf("1854406302:AAEjtuKxhdhu8HhaQ1JXu-nPNOpboPHPfi8");
+const bot = new Telegraf("process.env.BOT_TOKEN");
 
 chron.schedule("*/15 * * * *", async () => {
   tankKoenigApi
