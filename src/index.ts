@@ -4,30 +4,32 @@ import chron from "node-cron";
 import { GasType, SortType, tankKoenigApi } from "./tanken-api";
 
 let e5Threshold = 1.45;
-const bot = new Telegraf("process.env.BOT_TOKEN");
+const bot = new Telegraf(process.env.BOT_TOKEN as any);
+
+const getStations = () => {
+  return tankKoenigApi.getStationsByLocation(
+    50.963604,
+    7.142388,
+    5,
+    SortType.Price,
+    GasType.E5
+  );
+};
 
 chron.schedule("*/15 * * * *", async () => {
-  tankKoenigApi
-    .getStationsByLocation(
-      50.963604,
-      7.142388,
-      5,
-      SortType.Price,
-      GasType.E5
-    )
-    .then((data) => {
-      data.stations?.forEach((station) => {
-        const price = station.e5 ?? station.price;
-        if (price && price < e5Threshold) {
-          bot.telegram.sendMessage(
-            -534885489,
-            `Es wurde eine Tankstelle mit einem Preis von ${station.e5}€ gefunden.\n
+  getStations().then((data) => {
+    data.stations?.forEach((station) => {
+      const price = station.e5 ?? station.price;
+      if (price && price < e5Threshold) {
+        bot.telegram.sendMessage(
+          -534885489,
+          `Es wurde eine Tankstelle mit einem Preis von ${station.e5}€ gefunden.\n
                 Name: ${station.name}
                 Adresse: https://maps.google.com/?ll=${station.lat},${station.lng}`
-          );
-        }
-      });
+        );
+      }
     });
+  });
 });
 
 bot.command("chatid", (ctx: Context) =>
@@ -47,7 +49,19 @@ bot.command("setPriceE5", (ctx: Context) => {
     ctx.reply(error);
   }
 });
-
+bot.command("current", (ctx: Context) => {
+  getStations().then((data) => {
+    var text = data.stations
+      ?.map(
+        (station) =>
+          `Name: ${station.brand} ${station.name}\nPreis: ${
+            station.e5 || station.price
+          }\nAdresse: https://maps.google.com/?ll=${station.lat},${station.lng}`
+      )
+      .join("\n\n");
+    ctx.reply(text);
+  });
+});
 bot.launch();
 
 // Enable graceful stop
