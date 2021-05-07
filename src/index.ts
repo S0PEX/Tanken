@@ -24,7 +24,7 @@ chron.schedule("*/15 * * * *", async () => {
         bot.telegram.sendMessage(
           -534885489,
           `Es wurde eine Tankstelle mit einem Preis von ${station.e5}€ gefunden.\n
-                Name: ${station.name}
+                Name: ${station.brand}-${station.name}
                 Adresse: https://maps.google.com/?ll=${station.lat},${station.lng}`
         );
       }
